@@ -19,7 +19,9 @@ G1 = [ 	1     1     0     1     0     0     0 ;...
         1     0     1     0     0     0     1 ];
 
 % codeword
-u = [1 0 0 1];      % corresponds to polynomial (1 + x^3)
+% u = [1 0 0 1];      % corresponds to polynomial (1 + x^3)
+u = binaryArray(4); % all possible 4-bit values
+usize = size(u);
 
 % C1
 C1 = mod(u*G1,2);
@@ -27,9 +29,10 @@ C1 = mod(u*G1,2);
 % output
 disp('H ='); disp(H1);
 disp('G ='); disp(G1);
-disp(['Input (u) = ', num2str(u)]);  disp(' ');
+disp('Input (u) = ')
+disp(u);  disp(' ');
 disp('C1 = uG'); disp(' ');
-disp(['C1 = ', num2str(C1)]); disp(' ');
+disp('C1 = '); disp(C1); disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 %{
 Comment:
@@ -45,7 +48,7 @@ p = [1 1 0 1];      % irreducible polynomial: 1 + x + x^3
 m = 3;           	% number of parity bits
 n = 2^m - 1;        % length of codeword
 k = n - m;        	% length of message
-assert(k== length(u));
+assert(k==usize(2)); % confirm that k is the message length
 
 
 % parity check and generator matrices
@@ -60,15 +63,17 @@ C2 = mod(u*G2,2);
 % output
 disp('H ='); disp(H2);
 disp('G ='); disp(G2);
-disp(['Input (u) = ', num2str(u)]);  disp(' ');
+disp('Input (u) = ')
+disp(u);  disp(' ');
 disp('C2 = uG'); disp(' ');
-disp(['C2 = ', num2str(C2)]); disp(' ');
+disp('C2 = '); disp(C2); disp(' ');
+
 
 %% Note:
 disp('*Note'); disp(' ');
 
-C_mult = gfconv(u,p);
-[~,C_div] = gfdeconv(u,p);
+C_mult = gfconv(u(10,:),p);
+[~,C_div] = gfdeconv(u(10,:),p);
 
 % output
 disp(' ');
@@ -96,10 +101,10 @@ Multiplication is the same as division:
 disp('Question 3:');  disp(' ');
 
 % output
-disp(['C1 = ', num2str(C1)]); disp(' ');
-disp(['C2 = ', num2str(C2)]); disp(' ');
+disp('C1 = '); disp(C1); disp(' ');
+disp('C2 = '); disp(C2); disp(' ');
 if isequal(C1,C2)
-    disp([   'C1 and C2 are the same, because the input code word, ',...
+    disp([   'C1 and C2 are the same, because the input code word(s), ',...
             'and generator matrices are identical.']);
   	disp([  'The irreducible polynomial 1+x+x^3 creates the parity ',...
             'and generator matrices shown in Handout equation (2.6)']);
@@ -115,28 +120,34 @@ disp('--------------------------------------------------------');disp(' ');
 %% Question 4:
 disp('Question 4:');  disp(' ');
 
-x_m = [0 0 0 1];                % x^(n-k) = x^m = [0 0 0 1]
-M_x = gfconv(u,x_m);            % previous codeword u = [1 0 0 1]
+% M_x = gfconv(u,x_m);                      % m(x)
+% [~,P_x] = gfdeconv(M_x,p);                % Parity bits: m(x)*x^3 / g(x)
+% C3 = bitxor(zeropad(P_x,length(M_x),'after'),M_x);
 
-[~,P_x] = gfdeconv(M_x,p);       	% Parity bits: m(x)*x^3 / g(x)
-C3 = bitxor(zeropad(P_x,length(M_x),'after'),M_x);
+[C3,P_x] = systematicHamming(m,u,p);
+assert(isequal(C1,C3));
 
 % output
-disp(['Input = ', num2str(u)]);  disp(' ');
 fprintf('g(x) = '); gfpretty (p); disp(' ');
-disp(['g(x) as a binary row vector: ', num2str(p)]); disp(' ')
+disp(['g(x) as a binary row vector: ', num2str(p)]); disp(' '); disp(' ');
+disp('Input m(x) = ')
+disp(u);  disp(' ');
+disp('P(x) = m(x)(X^(n-k))/g(x) = ');
+disp(P_x);
+disp(' *Note: P(x) and m(x) are zero-padded to the length of codeword (n)');
 disp(' ');
-fprintf('m(x)*X^(n-k) = '); gfpretty (M_x); disp(' ');
-disp(['m(x)*X^(n-k) as a binary row vector: ', num2str(M_x)]); disp(' ')
+disp('C3 =  m(x) + P(x)');
 disp(' ');
-fprintf('P(x) = m(x)(X^(n-k))/g(x) = '); gfpretty(P_x); disp(' ');
-disp(['P(x) as a binary row vector: ', num2str(P_x)]); disp(' ')
-disp(' ');
-disp('C3 =  m(x) + P(x)  *Note: P(x) is zero-padded to the length of m(x)');
-disp(' ');
-fprintf('C3 = '); gfpretty(C3); disp(' ');
-disp(['C3 as a binary row vector: ', num2str(C3)]); disp(' ')
+disp('C3 = ');
+disp(C3); disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 
+%% Question 5:
+disp('Question 5:');  disp(' ');
 
+d_min = minHammingDistance(C1);
+
+% output
+disp(['d_min of C1 = ', num2str(d_min)]); disp(' ')
+disp('--------------------------------------------------------');disp(' ');
 

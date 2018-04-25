@@ -5,8 +5,8 @@ if nargin < 3
     pos = 'front';
 end
 
-if len<=length(array_to_be_padded)
-    error('Padding not possible')
+if len<length(array_to_be_padded)
+    warning('Padding not possible')
 end
 
 padded_array = [array_to_be_padded];
