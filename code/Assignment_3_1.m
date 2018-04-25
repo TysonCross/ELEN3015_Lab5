@@ -17,6 +17,8 @@ G1 = [ 	1     1     0     1     0     0     0 ;...
         0     1     1     0     1     0     0 ;...
         1     1     1     0     0     1     0 ;...
         1     0     1     0     0     0     1 ];
+    
+C1 = {G1,H1};
 
 % codeword
 % u = [1 0 0 1];      % corresponds to polynomial (1 + x^3)
@@ -24,19 +26,20 @@ u = binaryArray(4); % all possible 4-bit values
 usize = size(u);
 
 % C1
-C1 = mod(u*G1,2);
+v1 = mod(u*G1,2);
 
 % output
+disp('C1:')
 disp('H ='); disp(H1);
 disp('G ='); disp(G1);
 disp('Input (u) = ')
 disp(u);  disp(' ');
-disp('C1 = uG'); disp(' ');
-disp('C1 = '); disp(C1); disp(' ');
+disp('v = uG'); disp(' ');
+disp('v = '); disp(v1); disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 %{
 Comment:
- In C1, the first three bits are the added parity bits,
+ In v1, the first three bits are the added parity bits,
  and the last four bits are the data message (u)
 %}
 
@@ -57,16 +60,18 @@ fprintf(' g(x) = '); gfpretty(p); disp(' ');
 disp('Generating the H and G parity and generator matrices...'); disp(' ');
 H2 = parityMatrix(m,p);
 G2 = generatorMatrix(H2);
+C2 = {G2,H2};
 
-C2 = mod(u*G2,2);
+v2 = mod(u*G2,2);
 
 % output
+disp('C2:')
 disp('H ='); disp(H2);
 disp('G ='); disp(G2);
 disp('Input (u) = ')
 disp(u);  disp(' ');
-disp('C2 = uG'); disp(' ');
-disp('C2 = '); disp(C2); disp(' ');
+disp('v = uG'); disp(' ');
+disp('v = '); disp(v2); disp(' ');
 
 
 %% Note:
@@ -101,15 +106,15 @@ Multiplication is the same as division:
 disp('Question 3:');  disp(' ');
 
 % output
-disp('C1 = '); disp(C1); disp(' ');
-disp('C2 = '); disp(C2); disp(' ');
+disp('C1 = '); disp(C1{1}); disp(' ');
+disp('C2 = '); disp(C2{2}); disp(' ');
 if isequal(C1,C2)
-    disp([   'C1 and C2 are the same, because the input code word(s), ',...
-            'and generator matrices are identical.']);
+    disp([   'C1 and C2 are identical.']);
   	disp([  'The irreducible polynomial 1+x+x^3 creates the parity ',...
             'and generator matrices shown in Handout equation (2.6)']);
-        disp([  'The first m (three) bits are the parity bits,',...
-            'and the next four bits are the original message (u)']);
+    disp([  'In the generated codewords, v, the first m (three) ',...
+            'bits are the parity bits, and the next four bits are ',...
+            'the original message (u)']);
 else
     disp('C1 and C2 do not match')
 end
@@ -124,8 +129,8 @@ disp('Question 4:');  disp(' ');
 % [~,P_x] = gfdeconv(M_x,p);                % Parity bits: m(x)*x^3 / g(x)
 % C3 = bitxor(zeropad(P_x,length(M_x),'after'),M_x);
 
-[C3,P_x] = systematicHamming(m,u,p);
-assert(isequal(C1,C3));
+[v3,P_x] = systematicHamming(m,u,p);
+assert(isequal(v1,v3));
 
 % output
 fprintf('g(x) = '); gfpretty (p); disp(' ');
@@ -136,18 +141,62 @@ disp('P(x) = m(x)(X^(n-k))/g(x) = ');
 disp(P_x);
 disp(' *Note: P(x) and m(x) are zero-padded to the length of codeword (n)');
 disp(' ');
-disp('C3 =  m(x) + P(x)');
+disp('v =  m(x) + P(x)');
 disp(' ');
-disp('C3 = ');
-disp(C3); disp(' ');
+disp('v = ');
+disp(v3); disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 
 %% Question 5:
 disp('Question 5:');  disp(' ');
 
-d_min = minHammingDistance(C1);
+% all possible combinations of the basis vectors in G 
+d_min = minHammingDistance(C1{1});   
 
 % output
 disp(['d_min of C1 = ', num2str(d_min)]); disp(' ')
 disp('--------------------------------------------------------');disp(' ');
 
+%% Question 6:
+disp('Question 6:');  disp(' ');
+
+u_nozero = nonZeroBinaryArray(k);
+v = mod(u_nozero*G1,2);
+% Calculate the weight of every nonzero codeword
+w_min = minHammingWeight(v);
+
+% output
+disp('All possible non-zero codewords of C1 = ')
+disp(v);
+disp(['w_min of C1 = ', num2str(w_min)]); disp(' ')
+disp('--------------------------------------------------------');disp(' ');
+
+%% Question 7:
+disp('Question 7:');  disp(' ');
+
+% output
+disp(' "It is sufficient to arrange it that the minimum weight of a code');
+disp('word is 3 (or k)... because the Hamming distance between two code words, ');
+disp('A and B, say, is the weight of their sum, which sum is another code word.');
+disp('This means that if all weights of non-zero code words are at least');
+disp('3 (or k) the minimum Hamming distance between code words will be ');
+disp('at least 3 (or k)."');
+disp('Source: www-math.mit.edu/~djk/18.310/18.310F04/matrix_hamming_codes.html');
+disp('--------------------------------------------------------');disp(' ');
+
+%% Question 8:
+disp('Question 8:');  disp(' ');
+
+student_no = [1 2 3 9 4 4 8];
+for i=1:3
+    student_no_bin(i,:) = dec2binary(student_no(end-3+i),4);
+end
+
+c = mod(student_no_bin*G1,2);
+% output
+disp(['Student Number = ', num2str(student_no)]); disp(' ');
+disp('Binary row vectors of the last three digits =  ');
+disp(student_no_bin);
+disp('Codewords C = ');
+disp(c); disp(' ');
+disp('--------------------------------------------------------');disp(' ');
