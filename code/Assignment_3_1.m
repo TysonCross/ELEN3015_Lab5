@@ -1,9 +1,6 @@
 % ELEN3015 Lab5 Assignment 3.1
 % Tyson Cross 1239448
-% addpath('utilities');
 clc; clear all;
-
-
 
 %% Question 1:
 disp('Question 1:'); disp(' ');

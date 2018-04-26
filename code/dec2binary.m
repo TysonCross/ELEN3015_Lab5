@@ -23,7 +23,7 @@ if nargin<2
 end
         
 decimal = uint64(decimal);
-value = uint64(num_of_bits-1:-1:0);                      	% Array of exponents for binary entries
+value = uint64(num_of_bits-1:-1:0);                    	% Array of exponents for binary entries
 base = uint64(2).^value;                              	% Decimal values for each bit
 
 if decimal > sum(uint64(base), 'native')

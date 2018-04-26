@@ -3,6 +3,8 @@ function [d_min] = minHammingDistance(C,dir)
 %comparing all combinations of each row (or column) XORed with each other
 %row (or column)
 
+% Tyson Cross 1239448
+
 if nargin < 2
     dir = 'r';
 end

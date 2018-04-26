@@ -3,7 +3,7 @@ function [G] = generatorMatrix(H)
 
 % Tyson Cross 1239448
 
-[m n] = size(H);
+[m,n] = size(H);
 j = n-m;
 I = eye(m);
 I_j = eye(j);

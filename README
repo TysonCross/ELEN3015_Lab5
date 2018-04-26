@@ -10,4 +10,20 @@ Linear Block Codes
 ├── ELEN3015_Lab5_Report.pdf                        : The main Lab 5 report
 ├── README                                          : this file!
 └── code
+    ├── Assignment_3_1.m                            : Questions 1-8 for Assignment 1: Encoding
+    ├── Assignment_3_2.m                            : Questions 1-2 for Assignment 2: Decoding
+    ├── parityMatrix.m                              : function to create a parity matrix from an irreducible polynomial  
+    ├── generatorMatrix.m                           : function to create generator matrix from from a parity matrix 
+    ├── minHammingDistance.m                        : function to calculate the minimum Hamming distance
+    ├── minHammingWeight.m                          : function to calculate the minimum Hamming weight
+    ├── systematicHamming.m                         : systematic Hamming encoding
+    ├── binaryArray.m                               : function to create a binary array of all possible n-bit values
+    ├── nonZeroBinaryArray.m                        : function to create a binary array of all possible n-bit values (excluding zero rows)
+    ├── order2bin.m                                 : conversion function to create a binary row vector of a single power of x^m
+    ├── dec2binary.m                                : Utility function to convert decimal to fixed binary array 
+    ├── zeropad.m                                   : utility function to pad a row with zeros (before/after)
+    ├── input_codewords.txt                         : Data file for Assignment 2
+    ├── input_codewords_corrected_mod.txt           : Data file for Assignment 2 (using matrix product)
+    ├── input_codewords_corrected_remainder.txt     : Data file for Assignment 2 (using modulo remainder)
+    └── input_codewords_error.txt                   : Data file for Assignment 2
 

@@ -1,6 +1,8 @@
 function [C,P_x] = systematicHamming(m,u,p)
 %systematicHamming() performs systematic encoding of the Hamming(7,4) code
 
+% Tyson Cross 1239448
+
 usize = size(u);
 x_m = order2bin(m);                % x^(n-k) = x^m
 n = 2^m - 1;
