@@ -2,7 +2,6 @@ function [d_min] = minHammingDistance(C,dir)
 %minHammingDistance measures the minimum Hamming distance in a code by
 %comparing all combinations of each row (or column) XORed with each other
 %row (or column)
-
 % Tyson Cross 1239448
 
 if nargin < 2
@@ -41,6 +40,4 @@ else
        end
 	end
 end
-
 end
-

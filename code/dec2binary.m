@@ -3,7 +3,6 @@ function [ bin ] = dec2binary( decimal, num_of_bits )
 % if the bitdepth is not specified, then an appropriate fixed length is
 % chosen, or 64,32,16 or 8 bits. Accurate conversion from 8 to
 % 64-bits is supported, for decimal values from 0 to intmax('uint64').
-
 % Tyson Cross 1239448
 
 if decimal > intmax('uint64')
@@ -37,5 +36,4 @@ for i=1:num_of_bits
         bin(i) = true;                                  % Set the binary bit
     end
 end
-
 end

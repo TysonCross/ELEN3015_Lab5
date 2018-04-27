@@ -1,6 +1,5 @@
 function [H] = parityMatrix(m,p)
 %parityMatrix() creates a parity matrix H of size (n,k) from m & polynomial p
-
 % Tyson Cross 1239448
 
 if length(p)~=(m+1)

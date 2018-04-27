@@ -15,7 +15,7 @@ G1 = [ 	1     1     0     1     0     0     0 ;...
         1     1     1     0     0     1     0 ;...
         1     0     1     0     0     0     1 ];
     
-C1 = {G1,H1};
+Code = {G1,H1};
 
 % codeword
 % u = [1 0 0 1];      % corresponds to polynomial (1 + x^3)
@@ -23,20 +23,21 @@ u = binaryArray(4); % all possible 4-bit values
 usize = size(u);
 
 % C1
-v1 = mod(u*G1,2);
+C1 = mod(u*G1,2);
 
 % output
-disp('C1:')
+disp('C1:');
+disp('---');
 disp('H ='); disp(H1);
 disp('G ='); disp(G1);
 disp('Input (u) = ')
 disp(u);  disp(' ');
-disp('v = uG'); disp(' ');
-disp('v = '); disp(v1); disp(' ');
+disp('C1 = uG'); disp(' ');
+disp('C1 = '); disp(C1); disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 %{
 Comment:
- In v1, the first three bits are the added parity bits,
+ In C1, the first three bits are the added parity bits,
  and the last four bits are the data message (u)
 %}
 
@@ -50,45 +51,50 @@ n = 2^m - 1;        % length of codeword
 k = n - m;        	% length of message
 assert(k==usize(2)); % confirm that k is the message length
 
-
 % parity check and generator matrices
 disp([' g(x) = ', num2str(p) ]); disp(' ');
 fprintf(' g(x) = '); gfpretty(p); disp(' ');
-disp('Generating the H and G parity and generator matrices...'); disp(' ');
-H2 = parityMatrix(m,p);
-G2 = generatorMatrix(H2);
-C2 = {G2,H2};
 
-v2 = mod(u*G2,2);
+for i=1:length(u)
+   C2(i,:) = zeropad(gfconv(u(i,:),p), n, 'after');
+end
 
 % output
-disp('C2:')
-disp('H ='); disp(H2);
-disp('G ='); disp(G2);
-disp('Input (u) = ')
+disp('C2:');
+disp('---');
+disp('Input (u) = ');
 disp(u);  disp(' ');
-disp('v = uG'); disp(' ');
-disp('v = '); disp(v2); disp(' ');
-
+disp('C2 = u*g(x)'); disp(' ');
+disp('C2 = '); disp(C2); disp(' ');
+disp('C2 (rows sorted by message value) :');
+% reorder the rows to match the input message order
+[~,sort_index] = sortrows(C2(:,1:k));
+C2 = C2(sort_index,:);
+disp(C2); disp (' ');
+%{
+Comment:
+ In C2, the first four bits are the data message (u),
+ and the last three bits are the added parity bits.
+%}
 
 %% Note:
-disp('*Note'); disp(' ');
+% disp('*Note'); disp(' ');
 
-C_mult = gfconv(u(10,:),p);
-[~,C_div] = gfdeconv(u(10,:),p);
-
-% output
-disp(' ');
-fprintf(' (1 + X^3) · (1 + X + X^3) = '); gfpretty(C_mult);
-disp (' ');
-disp(['As a binary row vector: ', num2str(C_mult)]); disp(' ');
-disp(' ');
-fprintf(' (1 + X^3) ÷ (1 + X + X^3) = '); gfpretty(C_div);
-disp (' '); 
-disp(['As a binary row vector: ', num2str(C_div)]); disp(' ');
-disp('Both of these solutions are equivalent under Galois Field G(3)');
-disp(' ')
-disp('--------------------------------------------------------');disp(' ');
+% C_mult = gfconv(u(10,:),p);
+% [~,C_div] = gfdeconv(u(10,:),p);
+% 
+% % output
+% disp(' ');
+% fprintf(' (1 + X^3) · (1 + X + X^3) = '); gfpretty(C_mult);
+% disp (' ');
+% disp(['As a binary row vector: ', num2str(C_mult)]); disp(' ');
+% disp(' ');
+% fprintf(' (1 + X^3) ÷ (1 + X + X^3) = '); gfpretty(C_div);
+% disp (' '); 
+% disp(['As a binary row vector: ', num2str(C_div)]); disp(' ');
+% disp('Both of these solutions are equivalent under Galois Field G(3)');
+% disp(' ')
+% disp('--------------------------------------------------------');disp(' ');
 %{
 Comment:
 Multiplication is the same as division:
@@ -103,31 +109,29 @@ Multiplication is the same as division:
 disp('Question 3:');  disp(' ');
 
 % output
-disp('C1 = '); disp(C1{1}); disp(' ');
-disp('C2 = '); disp(C2{2}); disp(' ');
-if isequal(C1,C2)
-    disp([   'C1 and C2 are identical.']);
-  	disp([  'The irreducible polynomial 1+x+x^3 creates the parity ',...
-            'and generator matrices shown in Handout equation (2.6)']);
-    disp([  'In the generated codewords, v, the first m (three) ',...
-            'bits are the parity bits, and the next four bits are ',...
-            'the original message (u)']);
+disp('C1 = '); disp(C1); disp(' ');
+disp('C2 (sorted) = '); disp(C2); disp(' ');
+assert(isequal(C1(:,k:end),C2(:,1:k)) && isequal(C1(:,1:m),C2(:,k+1:end)));
+if isequal(C1(:,k:end),C2(:,1:k)) && isequal(C1(:,1:m),C2(:,k+1:end))
+    disp([  'C1 and C2 are essentially the same, containing the same information in a different structure.']);
+  	disp([  'Using the irreducible polynomial 1+x+x^3 to create the parity and generator matrices (G, H) ']);
+    disp([  'results in the matrices shown in Handout equation (2.6). Encoding a 4-bit message through ']);
+    disp([  'matrix multiplication with G produces a codeword with 3 parity bits, followed by the message.']);
+    disp(' ')
+    disp([  'In the generated codewords for C2, this order is reversed: the four bits are the original ']);
+    disp([  'message (u) and the three bits are the parity bits. The row ordering of the codewords in C2 is ']);
+    disp([  'not the same as C1, but each individual row of a message and corresponding parity-bits match.']);
 else
     disp('C1 and C2 do not match')
 end
 disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 
-
 %% Question 4:
 disp('Question 4:');  disp(' ');
 
-% M_x = gfconv(u,x_m);                      % m(x)
-% [~,P_x] = gfdeconv(M_x,p);                % Parity bits: m(x)*x^3 / g(x)
-% C3 = bitxor(zeropad(P_x,length(M_x),'after'),M_x);
-
-[v3,P_x] = systematicHamming(m,u,p);
-assert(isequal(v1,v3));
+[C3,P_x] = systematicHamming(m,u,p);
+assert(isequal(C1,C3));
 
 % output
 fprintf('g(x) = '); gfpretty (p); disp(' ');
@@ -138,17 +142,17 @@ disp('P(x) = m(x)(X^(n-k))/g(x) = ');
 disp(P_x);
 disp(' *Note: P(x) and m(x) are zero-padded to the length of codeword (n)');
 disp(' ');
-disp('v =  m(x) + P(x)');
+disp('C3 =  m(x) + P(x)');
 disp(' ');
-disp('v = ');
-disp(v3); disp(' ');
+disp('C3 = ');
+disp(C3); disp(' ');
 disp('--------------------------------------------------------');disp(' ');
 
 %% Question 5:
 disp('Question 5:');  disp(' ');
 
 % all possible combinations of the basis vectors in G 
-d_min = minHammingDistance(C1{1});   
+d_min = minHammingDistance(Code{1});   
 
 % output
 disp(['d_min of C1 = ', num2str(d_min)]); disp(' ')
@@ -190,6 +194,7 @@ for i=1:3
 end
 
 c = mod(student_no_bin*G1,2);
+
 % output
 disp(['Student Number = ', num2str(student_no)]); disp(' ');
 disp('Binary row vectors of the last three digits =  ');

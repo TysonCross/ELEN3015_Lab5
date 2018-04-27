@@ -1,6 +1,5 @@
 function [padded_array] = zeropad(array_to_be_padded, len, pos)
 %zeropad() pads an numeric array with zeros to be specific length
-
 % Tyson Cross 1239448
 
 if nargin < 3
@@ -22,6 +21,4 @@ for i=1:len-length(array_to_be_padded)
         error('Padding position not recognised')
     end
 end
-
 end
-
