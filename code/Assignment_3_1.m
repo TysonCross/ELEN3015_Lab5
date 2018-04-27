@@ -17,8 +17,7 @@ G1 = [ 	1     1     0     1     0     0     0 ;...
     
 Code = {G1,H1};
 
-% codeword
-% u = [1 0 0 1];      % corresponds to polynomial (1 + x^3)
+% input
 u = binaryArray(4); % all possible 4-bit values
 usize = size(u);
 

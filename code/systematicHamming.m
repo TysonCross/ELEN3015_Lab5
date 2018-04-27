@@ -13,7 +13,7 @@ P_x = zeros(usize(1),n);        % parity bits
 C  = zeros(usize(1),n);         % Hamming(7,4)
 
 for i=1:usize(1)
-    M_x(i,:)  = zeropad(gfconv(u(i,:),x_m),n,'after');
+    M_x(i,:)  = zeropad(gfconv(u(i,:),x_m),n,'after')
     [~,p_x] = gfdeconv(M_x(i,:),p);      % m(x)*x^3 / g(x)
     P_x(i,:) = zeropad(p_x,n,'after');
     C(i,:) = bitxor(P_x(i,:), M_x(i,:));
